@@ -17,3 +17,11 @@ if (Meteor.isServer) {
     // code to run on server at startup
   });
 }
+
+Package.describe({
+    summary: "three.js packaged for use in Meteor."
+});
+
+Package.on_use(function (api) {
+    api.add_files('public/Core/three_js/three.min.js', 'client');
+});
