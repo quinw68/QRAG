@@ -11,18 +11,13 @@ $(document).ready(function () {
 });
 
 // GLOBALS
-var CORE_PATH = "Scripts/Core/";
-var RENDERER;
-var TERRAIN;
-var IO;
-var IDCOUNTER = 0;
-var ACTORS = [];
+CORE_PATH = "Scripts/Core/";
+ACTORS = [];
 
 function initGL() {
-    alert("Test");
     RENDERER = new Renderer();
     TERRAIN = new Terrain();
-    IO = new Input();
+    IO = new Input(RENDERER);
     $('#scene').append(RENDERER.renderer.domElement);
     
     TERRAIN.InitTerrain();

@@ -19,10 +19,6 @@ Character =  function()
     IO.controls.target = this;
     IO.controls.maxDistance = 30;
     
-    increment = function ()
-    {
-
-    }
     keydown = function (event)
     {
         switch(event.keyCode){
@@ -74,21 +70,28 @@ Character =  function()
     this.updateCamera = function ()
     {
         var target = (scope.rotation + Math.PI) % (2 * Math.PI);
+        
         var diff = target - IO.controls.theta;
-
+        console.log("diff: " + diff);
+        if (diff < 0) {
+            diff = 2 * Math.PI - diff;
+        }
+        var rotation = 0;
         if (Math.abs(diff) <= Math.PI / 20) {
-            IO.controls.theta = (scope.rotation + Math.PI) % (2 * Math.PI);
+            IO.controls.theta = target;
             return;
         }
         if ((diff > 0 && diff < Math.PI))
         {
-            IO.controls.theta = (IO.controls.theta + Math.PI / 50) % (2 * Math.PI);
-            return;
+            rotation = (IO.controls.theta + Math.PI / 50);
         } else
         {
-            IO.controls.theta = (IO.controls.theta - Math.PI / 50) % (2 * Math.PI);
-            return;
+            rotation = (IO.controls.theta - Math.PI / 50);
         }
+        if (rotation < 0) {
+            rotation = 2 * Math.PI - rotation;
+        }
+        IO.controls.theta = rotation;
         //var diff2 = (scope.rotation + 2 * Math.PI) - IO.controls.theta;
         //var min = diff1;
         //if(Math.abs(diff2) < Math.abs(diff1)){
@@ -124,14 +127,23 @@ Character.prototype.update = function ()
     }
     if (scope.right)
     {
-        scope.rotation = (scope.rotation - Math.PI / 100) % (2 * Math.PI);
+        console.log("Before: " + scope.rotation);
+        scope.rotation = (scope.rotation - Math.PI / 100);
+        if (scope.rotation < 0) {
+            scope.rotation = 2 * Math.PI - scope.rotation;
+        }
         this.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), scope.rotation);
+        console.log(scope.rotation + ' - ' + IO.controls.theta);
         scope.updateCamera();
     }
     if (scope.left)
     {
         scope.rotation = (scope.rotation + Math.PI / 100) % (2 * Math.PI);
+        if (scope.rotation > 0) {
+            scope.rotation = scope.rotation % (2 * Math.PI);
+        }
         this.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), scope.rotation);
+        console.log(scope.rotation + ' - ' + IO.controls.theta);
         scope.updateCamera();
     }
     if (scope.sidestepleft)
