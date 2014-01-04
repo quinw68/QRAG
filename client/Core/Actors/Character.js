@@ -72,6 +72,9 @@ Character =  function()
         var target = (scope.rotation + Math.PI) % (2 * Math.PI);
         
         var diff = target - IO.controls.theta;
+        var less = diff < 0;
+        if (Math.abs(diff) > Math.PI) diff = 2 * Math.PI - Math.abs(diff);
+        if (less) diff = -diff;
         console.log(diff);
         if (Math.abs(diff) <= Math.PI / 20) {
             IO.controls.theta = target;
@@ -102,7 +105,6 @@ Character.prototype = new Actor();
 
 Character.prototype.update = function ()
 {
-        
     if (scope.forward)
     {
         scope.translateZ(1);
@@ -145,4 +147,5 @@ Character.prototype.update = function ()
         scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z);
         scope.updateCamera();
     }
+    scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z);
 }
