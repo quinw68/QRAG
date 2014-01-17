@@ -5,10 +5,10 @@
 Renderer = function () {
 
     this.scene = new THREE.Scene();
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     //this.camera = new THREE.OrthographicCamera(window.innWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 0.1, 2000);
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
     //this.target = new THREE.Vector3(-10, 10, 0);
     this.render = function ()
     {
@@ -21,11 +21,8 @@ Renderer = function () {
     };
     this.camera.position.z = -5;
     this.camera.position.y = 5;
-    var _ambient = new THREE.AmbientLight(0x101030);
-    this.scene.add(_ambient);
-
-    var _pointLight = new THREE.PointLight(0xffeedd);
-    _pointLight.position.set(0, 50, 100);
-    this.scene.add(_pointLight);
-
+    this.renderer.setClearColor(0xffffff, 1);
+    this.renderer.gammaInput = true;
+    this.renderer.gammaOutput = true;
+    this.renderer.physicallyBasedShading = true;
 };

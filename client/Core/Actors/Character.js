@@ -72,19 +72,14 @@ Character =  function()
         var target = (scope.rotation + Math.PI) % (2 * Math.PI);
         
         var diff = target - IO.controls.theta;
-        var less = diff < 0;
+
         if (Math.abs(diff) > Math.PI) diff = 2 * Math.PI - Math.abs(diff);
-        if (less) diff = -diff;
-        console.log(diff);
         if (Math.abs(diff) <= Math.PI / 20) {
             IO.controls.theta = target;
             return;
         }
-        if (diff < 0) {
-            diff = 2 * Math.PI + diff;
-        }
         var rotation = 0;
-        if ((diff > 0 && diff < Math.PI))
+        if (diff > 0)
         {
             rotation = (IO.controls.theta + Math.PI / 50);
         } else

@@ -17,6 +17,7 @@ ACTORS = [];
 function initGL() {
     RENDERER = new Renderer();
     TERRAIN = new Terrain();
+    SKY = new Sky();
     IO = new Input(RENDERER);
     $('#scene').append(RENDERER.renderer.domElement);
     

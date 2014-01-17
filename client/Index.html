@@ -4,5 +4,37 @@
 <style>canvas { width: 100%; height: 100% }</style>
 <script src="Core/three_js/three.min.js"></script>
 <script src="Core/main.js"></script>
+    <script type="x-shader/x-vertex" id="vertexShader">
+
+        varying vec3 vWorldPosition;
+
+        void main() {
+
+            vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+            vWorldPosition = worldPosition.xyz;
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+        }
+
+    </script>
+
+    <script type="x-shader/x-fragment" id="fragmentShader">
+
+        uniform vec3 topColor;
+        uniform vec3 bottomColor;
+        uniform float offset;
+        uniform float exponent;
+
+        varying vec3 vWorldPosition;
+
+        void main() {
+
+            float h = normalize( vWorldPosition + offset ).y;
+            gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( h, exponent ), 0.0 ) ), 1.0 );
+
+        }
+
+    </script>
 <div id="scene"></div>
 </template>
