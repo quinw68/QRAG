@@ -1,13 +1,15 @@
 ﻿/// <reference path="Input.js" />
 /// <reference path="../main.js" />
 
-Keyboard = function ()
+Keyboard = function (elem)
 {
     this.EVENTS = {
         KEYUP: "keyup",
         KEYDOWN: "keydown",
         KEYPRESS: "keypress"
     };
+
+    var DOMElement = elem;
 
     var _listeners = [];
 
@@ -27,9 +29,9 @@ Keyboard = function ()
         if (objectHas(type, this.EVENTS))
         {
             if($.inArray(type, _listeners)){
-                document.removeEventListener(type, arguments.callee, false)
+                DOMElement.removeEventListener(type, arguments.callee, false)
             }
-            document.addEventListener(type, func, false);
+            DOMElement.addEventListener(type, func, false);
             _listeners.push(type);
         }
     }

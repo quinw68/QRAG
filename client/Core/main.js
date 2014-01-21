@@ -5,7 +5,7 @@
 /// <reference path="Actors/Character.js" />
 /// <reference path="Actors/Actor.js" />
 
-$(document).ready(function () {
+$(function () {
     initGL();
     mainLoop();
 });
@@ -18,8 +18,13 @@ function initGL() {
     RENDERER = new Renderer();
     TERRAIN = new Terrain();
     SKY = new Sky();
-    IO = new Input(RENDERER);
     $('#scene').append(RENDERER.renderer.domElement);
+//    RENDERER.renderer.domElement.addEventListener('mousedown', function(event){
+//        RENDERER.renderer.domElement.addEventListener('mousemove', function(event){
+//            console.log(event.webkitMovementY);
+//        }, false);
+//    });
+    IO = new Input(RENDERER.renderer.domElement);
     
     TERRAIN.InitTerrain();
     MainChar = new Character();

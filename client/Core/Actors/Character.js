@@ -15,10 +15,10 @@ Character =  function()
     this.right = false;
     this.sidestepleft = false;
     this.sidestepright = false;
-    this.height = 5;
+    this.height = 10;
     IO.controls.target = this;
-    IO.controls.maxDistance = 30;
-    
+    IO.controls.maxDistance = 100;
+
     keydown = function (event)
     {
         switch(event.keyCode){
@@ -103,7 +103,6 @@ Character.prototype.update = function ()
     if (scope.forward)
     {
         scope.translateZ(1);
-        scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z);
         scope.updateCamera();
     }
     if (scope.right)
@@ -127,20 +126,17 @@ Character.prototype.update = function ()
     if (scope.sidestepleft)
     {
         scope.translateX(1);
-        scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z);
         RENDERER.camera.translateX(-1);
     }
     if (scope.sidestepright)
     {
         scope.translateX(-1);
-        scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z);
         RENDERER.camera.translateX(1);
     }
     if (scope.backward)
     {
         scope.translateZ(-1);
-        scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z);
         scope.updateCamera();
     }
-    scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z);
+    scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z) + (this.height / 2);
 }

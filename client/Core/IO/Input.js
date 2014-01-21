@@ -6,16 +6,10 @@
 /// <reference path="../three_js/js/controls/TrackballControls.js" />
 
 
-Input = function ()
+Input = function (element)
 {
-    this.controls = new THREE.OrbitControls(RENDERER.camera);
-    
-    //this.controls = new THREE.TrackballControls(RENDERER.camera);
-    //this.controls.noPan = true;
-    //this.controls.noRoll = true;
-    this.controls.target.x = 10;
-    this.controls.target.y = 10;
-
-    this.mouse = new Mouse();
-    this.keyboard = new Keyboard();
+    this.controls = new THREE.OrbitControls(RENDERER.camera, element);
+    this.controls.minDistance = 0.5;
+    this.mouse = new Mouse(element);
+    this.keyboard = new Keyboard(element);
 };

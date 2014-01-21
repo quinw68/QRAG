@@ -221,25 +221,16 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	    var position = this.object.position;
 
-	    //var offset = position.clone().sub( this.target );
-        
-
-		// angle from z-axis around y-axis
-
-	    //var theta = Math.atan2( offset.x, offset.z );
-       
-
-		// angle from y-axis
-
-		//var phi = Math.atan2( Math.sqrt( offset.x * offset.x + offset.z * offset.z ), offset.y );
-
 		if ( this.autoRotate ) {
 
 			this.rotateLeft( getAutoRotationAngle() );
 
 		}
 
+        // angle from z-axis around y-axis
 		this.theta += thetaDelta;
+
+        // angle from the y-axis
 		phi += phiDelta;
 
 		// restrict phi to be between desired limits
@@ -248,17 +239,17 @@ THREE.OrbitControls = function ( object, domElement ) {
 		// restrict phi to be betwee EPS and PI-EPS
 		phi = Math.max( EPS, Math.min( Math.PI - EPS, phi ) );
 
-		var radius = scope.distance * scale;
+		scope.distance = scope.distance * scale;
 
 		// restrict radius to be between desired limits
-		radius = Math.max( this.minDistance, Math.min( this.maxDistance, radius ) );
+		scope.distance = Math.max( this.minDistance, Math.min( this.maxDistance, scope.distance ) );
 		
 		// move target to panned location
 		this.target.position.add( pan );
 		var offset = new THREE.Vector3(0, 0, 0);
-		offset.x = radius * Math.sin( phi ) * Math.sin( this.theta );
-		offset.y = radius * Math.cos( phi );
-		offset.z = radius * Math.sin( phi ) * Math.cos( this.theta );
+		offset.x = scope.distance * Math.sin( phi ) * Math.sin( this.theta );
+		offset.y = scope.distance * Math.cos( phi );
+		offset.z = scope.distance * Math.sin( phi ) * Math.cos( this.theta );
 
 		position.copy( this.target.position ).add( offset );
 
@@ -296,7 +287,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		if ( scope.enabled === false ) { return; }
 		event.preventDefault();
-
+        scope.domElement.requestPointerLock = scope.domElement.requestPointerLock ||
+            scope.domElement.mozRequestPointerLock ||
+            scope.domElement.webkitRequestPointerLock;
+        scope.domElement.requestPointerLock();
 		if ( event.button === 0 ) {
 			if ( scope.noRotate === true ) { return; }
 
@@ -337,9 +331,22 @@ THREE.OrbitControls = function ( object, domElement ) {
 		if ( state === scope.STATE.ROTATE ) {
 
 			if ( scope.noRotate === true ) return;
-
-			rotateEnd.set( event.clientX, event.clientY );
-			rotateDelta.subVectors( rotateEnd, rotateStart );
+            var havePointerLock = 'pointerLockElement' in document ||
+                'mozPointerLockElement' in document ||
+                'webkitPointerLockElement' in document;
+            if(havePointerLock) {
+                rotateDelta.x = event.movementX ||
+                    event.mozMovementX          ||
+                    event.webkitMovementX       ||
+                    0;
+                rotateDelta.y = event.movementY ||
+                    event.mozMovementY      ||
+                    event.webkitMovementY   ||
+                    0;
+            } else {
+                rotateEnd.set( event.clientX, event.clientY );
+                rotateDelta.subVectors( rotateEnd, rotateStart );
+            }
 
 			// rotating across whole screen goes 360 degrees around
 			scope.rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
@@ -388,7 +395,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 	function onMouseUp( /* event */ ) {
 
 		if ( scope.enabled === false ) return;
-
+        document.exitPointerLock = document.exitPointerLock ||
+            document.mozExitPointerLock ||
+            document.webkitExitPointerLock;
+        document.exitPointerLock();
 		// Greggman fix: https://github.com/greggman/three.js/commit/fde9f9917d6d8381f06bf22cdff766029d1761be
 		scope.domElement.removeEventListener( 'mousemove', onMouseMove, false );
 		scope.domElement.removeEventListener( 'mouseup', onMouseUp, false );
