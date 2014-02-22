@@ -16,18 +16,15 @@ ACTORS = [];
 
 function initGL() {
     RENDERER = new Renderer();
-    TERRAIN = new Terrain();
     SKY = new Sky();
     $('#scene').append(RENDERER.renderer.domElement);
-//    RENDERER.renderer.domElement.addEventListener('mousedown', function(event){
-//        RENDERER.renderer.domElement.addEventListener('mousemove', function(event){
-//            console.log(event.webkitMovementY);
-//        }, false);
-//    });
     IO = new Input(RENDERER.renderer.domElement);
-    
-    TERRAIN.InitTerrain();
+
     MainChar = new Character();
+    MainChar.init();
+    TERRAIN = new Terrain();
+    TERRAIN.InitTerrain(MainChar.position.x, MainChar.position.y);
+
     ACTORS.push(MainChar);
 }
 

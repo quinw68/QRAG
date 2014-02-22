@@ -1,46 +1,35 @@
-﻿/// <reference path="../three_js/three.min.js" />
-/// <reference path="../main.js" />
-/// <reference path="../Renderer/Renderer.js" />
-/// <reference path="../three_js/js/loaders/OBJLoader.js" />
-/// <reference path="../three_js/js/loaders/ColladaLoader.js" />
-
+﻿
 Terrain = function (x, y)
 {
     this.dae = null;
+    this.tile_width = 100;
+    this.scale = 10;
+
     var scope = this;
-}
+    var current_tile;
 
-Terrain.prototype = {
-    constructor: Terrain,
+    var GetTileCoords = function(x, y){
+        x = Math.floor(x/(scope.tile_width/2 * scope.scale));
+        y = Math.floor(y/(scope.tile_width/2 * scope.scale));
+        return {x: x, y: y};
+    }
 
-    InitTerrain: function () {
-        this.LoadTerrain();
-    },
-
-    LoadTerrain: function ()
+    this.InitTerrain = function (x, y)
     {
-        // model
-        var dae, skin;
-        var scope = this;
-        var loader = new THREE.ColladaLoader();
-        loader.options.convertUpAxis = true;
-        loader.load('Assets/terrain.dae', function (collada) {
+        var current_tile_coords = GetTileCoords(x, y);
+        current_tile = new TerrainTile(current_tile_coords);
+        current_tile.Load();
+    }
 
-            dae = collada.scene;
-            skin = collada.skins[0];
-
-            dae.scale.x = dae.scale.y = dae.scale.z = 10;
-            dae.updateMatrix();
-            scope.dae = dae;
-            RENDERER.scene.add(dae);
-        });
-    },
-    
-    GetHeight: function (x, z)
+    this.GetHeight = function(x, z)
     {
-        if(this.dae){
+        if(current_tile.dae){
             var ray = new THREE.Raycaster(new THREE.Vector3(x, -10000, z), new THREE.Vector3(0, 1, 0));
-            var where = ray.intersectObjects(this.dae.children);
+            var where = ray.intersectObjects(current_tile.dae.children);
+            if(where[0] == undefined) // if no height
+            {
+                return null;
+            }
             return where[0].point.y;
         }
     }

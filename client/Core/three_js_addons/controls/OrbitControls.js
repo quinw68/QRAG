@@ -72,6 +72,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5 };
 
 	this.theta = 0;
+    this.justClicked = false;
 	////////////
 	// internals
 
@@ -286,7 +287,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	function onMouseDown( event ) {
 
 		if ( scope.enabled === false ) { return; }
-		event.preventDefault();
+		//event.preventDefault();
         scope.domElement.requestPointerLock = scope.domElement.requestPointerLock ||
             scope.domElement.mozRequestPointerLock ||
             scope.domElement.webkitRequestPointerLock;
@@ -295,6 +296,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 			if ( scope.noRotate === true ) { return; }
 
 			state = scope.STATE.ROTATE;
+
+            scope.justClicked = true;
 
 			rotateStart.set( event.clientX, event.clientY );
 
@@ -324,13 +327,16 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		if ( scope.enabled === false ) return;
 
-		event.preventDefault();
+		//event.preventDefault();
 
 		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
 
 		if ( state === scope.STATE.ROTATE ) {
 
-			if ( scope.noRotate === true ) return;
+			if ( scope.noRotate === true || scope.justClicked < 4 ){ // Don't do anything for the first move event
+                scope.justClicked++;
+                return;
+            }
             var havePointerLock = 'pointerLockElement' in document ||
                 'mozPointerLockElement' in document ||
                 'webkitPointerLockElement' in document;

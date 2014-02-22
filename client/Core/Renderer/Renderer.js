@@ -7,6 +7,7 @@ Renderer = function () {
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.domElement.setAttribute('tabindex', '1');
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
     this.render = function ()
     {

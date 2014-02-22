@@ -19,6 +19,8 @@ Character =  function()
     IO.controls.target = this;
     IO.controls.maxDistance = 100;
 
+    prev_position = new THREE.Vector3();
+
     keydown = function (event)
     {
         switch(event.keyCode){
@@ -63,14 +65,23 @@ Character =  function()
                 break;
             case Keyboard.KEYS.e:
                 scope.sidestepright = false;
+                break;
+            case Keyboard.KEYS.z:
+                break;
         }
+    }
+
+    this.snapCamera = function()
+    {
+        var target = (scope.rotation + Math.PI) % (2 * Math.PI);
+        IO.controls.theta = target;
     }
 
     // Slowly move the camera to behind the target
     this.updateCamera = function ()
     {
         var target = (scope.rotation + Math.PI) % (2 * Math.PI);
-        
+
         var diff = target - IO.controls.theta;
 
         if (Math.abs(diff) > Math.PI) diff = 2 * Math.PI - Math.abs(diff);
@@ -97,7 +108,9 @@ Character =  function()
 };
 
 Character.prototype = new Actor();
-
+Character.prototype.init = function(){
+    scope.snapCamera();
+}
 Character.prototype.update = function ()
 {
     if (scope.forward)
@@ -138,5 +151,24 @@ Character.prototype.update = function ()
         scope.translateZ(-1);
         scope.updateCamera();
     }
-    scope.position.y = TERRAIN.GetHeight(scope.position.x, scope.position.z) + (this.height / 2);
+    var new_height = TERRAIN.GetHeight(scope.position.x, scope.position.z);
+
+    if(new_height == null) // We have reached the edge of a tile with no tile beyond it.
+    {
+        new_x_height = TERRAIN.GetHeight(scope.position.x, prev_position.z); // Find out which axis is restricted, x or z?
+        new_z_height = TERRAIN.GetHeight(prev_position.x, scope.position.z);
+        if(new_x_height == null){
+            scope.position.x = prev_position.x;
+        }
+        if(new_z_height == null)
+        {
+            scope.position.z = prev_position.z;
+        }
+        scope.position.y = (this.height/2) + TERRAIN.GetHeight(scope.position.x, scope.position.z);
+    }
+    else
+    {
+        scope.position.y = new_height + (this.height / 2);
+    }
+    prev_position.copy(scope.position);
 }
